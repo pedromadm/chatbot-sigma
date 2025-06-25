@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Assistente SIGMA - Declarações</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+    }
+    #chat {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .resposta {
+      margin-top: 2rem;
+      background: #e8f0fe;
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Assistente de Declarações SIGMA</h1>
+  <div id="chat">
+    <label for="pergunta">Digite sua dúvida:</label>
+    <textarea id="pergunta" placeholder="Ex: Como gerar a declaração?"></textarea>
+    <button onclick="enviarPergunta()">Enviar</button>
+    <div id="resposta" class="resposta"></div>
+  </div>
+
+  <script>
+    const API_KEY = "DEMO_KEY_AQUI"; // Esta chave será substituída em ambiente real
+
+    async function enviarPergunta() {
+      const pergunta = document.getElementById("pergunta").value;
+      const respostaEl = document.getElementById("resposta");
+
+      respostaEl.innerText = "Pensando...";
+
+      const promptSistema = `Você é um assistente especializado no procedimento de emissão da Declaração de Inexistência de Conflitos de Interesses, segundo o Manual da Equipa SIGMA (Portaria 185/2024/1, de 14 de Agosto). Responda de forma clara e direta a dúvidas sobre:
+- Como emitir a declaração
+- Onde localizar o botão ou macro
+- Como funciona o circuito de assinatura
+- Como arquivar
+- Observações gerais sobre o uso da DAM - Gestão de Expediente
+
+Responda a pergunta do utilizador com base nesse contexto.`;
+
+      const body = {
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: promptSistema },
+          { role: "user", content: pergunta }
+        ]
+      };
+
+      try {
+        const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify(body)
+        });
+
+        const data = await resposta.json();
+        respostaEl.innerText = data.choices[0].message.content;
+      } catch (err) {
+        respostaEl.innerText = "Ocorreu um erro ao obter a resposta. Verifique sua conexão ou chave da API.";
+      }
+    }
+  </script>
+</body>
+</html>
