@@ -59,45 +59,26 @@
   </div>
 
   <script>
-    
-
     async function enviarPergunta() {
       const pergunta = document.getElementById("pergunta").value;
       const respostaEl = document.getElementById("resposta");
 
       respostaEl.innerText = "Pensando...";
 
-      const promptSistema = `Você é um assistente especializado no procedimento de emissão da Declaração de Inexistência de Conflitos de Interesses, segundo o Manual da Equipa SIGMA (Portaria 185/2024/1, de 14 de Agosto). Responda de forma clara e direta a dúvidas sobre:
-- Como emitir a declaração
-- Onde localizar o botão ou macro
-- Como funciona o circuito de assinatura
-- Como arquivar
-- Observações gerais sobre o uso da DAM - Gestão de Expediente
-
-Responda a pergunta do utilizador com base nesse contexto.`;
-
-      const body = {
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: promptSistema },
-          { role: "user", content: pergunta }
-        ]
-      };
-
       try {
-        const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
+        const resposta = await fetch("/api/chat", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${API_KEY}`
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify({ prompt: pergunta })
         });
 
         const data = await resposta.json();
-        respostaEl.innerText = data.choices[0].message.content;
+        respostaEl.innerText = data.resposta || "Sem resposta da API.";
       } catch (err) {
-        respostaEl.innerText = "Ocorreu um erro ao obter a resposta. Verifique sua conexão ou chave da API.";
+        console.error("Erro ao obter resposta:", err);
+        respostaEl.innerText = "Ocorreu um erro ao obter a resposta. Tente novamente.";
       }
     }
   </script>
