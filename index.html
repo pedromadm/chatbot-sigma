@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
   <title>Chatbot SIGMA</title>
@@ -15,6 +15,7 @@
       min-height:140px;
       padding:8px;
       margin-bottom:8px;
+      resize: vertical;
     }
     button{
       padding:8px 24px;
@@ -45,7 +46,7 @@
           body: JSON.stringify({ prompt: pergunta })
         });
 
-        // Lê o JSON mesmo em erro, para apanhar a mensagem
+        // Tentamos sempre ler o JSON, mesmo quando há erro
         const data = await response.json().catch(() => ({}));
 
         if(!response.ok){
