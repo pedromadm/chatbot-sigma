@@ -1,5 +1,4 @@
-# generate modified index.html showing API error message
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -35,7 +34,7 @@ html_content = """<!DOCTYPE html>
       const pergunta = document.getElementById("pergunta").value.trim();
       const respostaEl = document.getElementById("resposta");
       if(!pergunta){
-        respostaEl.innerText="Escreva uma pergunta primeiro 🙂";
+        respostaEl.innerText="Escreve uma pergunta primeiro 🙂";
         return;
       }
       respostaEl.innerText = "A pensar...";
@@ -46,7 +45,7 @@ html_content = """<!DOCTYPE html>
           body: JSON.stringify({ prompt: pergunta })
         });
 
-        // Tentamos sempre obter o JSON (mesmo em erro) para capturar a mensagem
+        // Lê o JSON mesmo em erro, para apanhar a mensagem
         const data = await response.json().catch(() => ({}));
 
         if(!response.ok){
@@ -68,7 +67,3 @@ html_content = """<!DOCTYPE html>
   <div id="resposta"></div>
 </body>
 </html>
-"""
-
-with open('/mnt/data/index_show_error.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
