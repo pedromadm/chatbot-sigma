@@ -1,44 +1,22 @@
-// Arquivo: /api/chat.js
+- const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', { … });
+- const data = await openaiRes.json();
+- const resposta = data.choices?.[0]?.message?.content || 'Erro ao gerar resposta.';
+- res.status(200).json({ resposta });
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Método não permitido' });
-  }
++ const openaiKey = process.env.OPENAI_API_KEY;
++ if (!openaiKey) {
++   return res.status(500).json({ message: 'OPENAI_API_KEY não configurada no ambiente.' });
++ }
 
-  const { prompt } = req.body;
-
-  if (!prompt) {
-    return res.status(400).json({ message: 'Prompt ausente' });
-  }
-
-  try {
-    const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'Você é um assistente que responde com base no manual da declaração de inexistência de conflitos de interesses. Seja claro e direto.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
-      })
-    });
-
-    const data = await openaiRes.json();
-    const resposta = data.choices?.[0]?.message?.content || 'Erro ao gerar resposta.';
-
-    res.status(200).json({ resposta });
-  } catch (error) {
-    console.error('Erro na API OpenAI:', error);
-    res.status(500).json({ message: 'Erro interno do servidor' });
-  }
-}
++ const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', { … });
++
++ if (!openaiRes.ok) {          // ← captura erros da API
++   const err = await openaiRes.json().catch(() => ({}));
++   console.error('Erro da OpenAI:', err);
++   return res.status(openaiRes.status)
++             .json({ message: err.error?.message || 'Erro da OpenAI' });
++ }
++
++ const data = await openaiRes.json();
++ const resposta = data.choices?.[0]?.message?.content?.trim() || 'Sem resposta da OpenAI.';
++ res.status(200).json({ resposta });
