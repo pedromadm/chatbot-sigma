@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+# generate modified index.html showing API error message
+html_content = """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -45,15 +46,17 @@
           body: JSON.stringify({ prompt: pergunta })
         });
 
+        // Tentamos sempre obter o JSON (mesmo em erro) para capturar a mensagem
+        const data = await response.json().catch(() => ({}));
+
         if(!response.ok){
-          throw new Error("Erro HTTP " + response.status);
+          throw new Error(data.message || ("Erro HTTP " + response.status));
         }
 
-        const data = await response.json();
         respostaEl.innerText = data.resposta || "Sem resposta da API.";
       } catch (err) {
         console.error(err);
-        respostaEl.innerText = "Erro ao obter resposta.";
+        respostaEl.innerText = err.message || "Erro ao obter resposta.";
       }
     }
   </script>
@@ -65,3 +68,7 @@
   <div id="resposta"></div>
 </body>
 </html>
+"""
+
+with open('/mnt/data/index_show_error.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
