@@ -2,63 +2,37 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <title>Chatbot SIGMA</title>
+  <title>Assistente SIGMA</title>
   <style>
-    body{
-      font-family: Arial, sans-serif;
-      max-width: 640px;
-      margin:40px auto;
-      text-align:center;
-    }
-    textarea{
-      width:100%;
-      min-height:140px;
-      padding:8px;
-      margin-bottom:8px;
-      resize: vertical;
-    }
-    button{
-      padding:8px 24px;
-      cursor:pointer;
-    }
-    #resposta{
-      margin-top:16px;
-      background:#f2f6ff;
-      border-radius:4px;
-      padding:12px;
-      min-height:40px;
-      white-space:pre-wrap;
-    }
+    body{{font-family:Arial,Helvetica,sans-serif;max-width:640px;margin:40px auto;text-align:center}}
+    textarea{{width:100%;min-height:140px;padding:8px;margin-bottom:8px;resize:vertical}}
+    button{{padding:8px 24px;cursor:pointer}}
+    #resposta{{margin-top:16px;background:#f2f6ff;border-radius:4px;padding:12px;min-height:40px;white-space:pre-wrap}}
   </style>
   <script>
-    async function enviarPergunta() {
+    async function enviarPergunta() {{
       const pergunta = document.getElementById("pergunta").value.trim();
       const respostaEl = document.getElementById("resposta");
-      if(!pergunta){
-        respostaEl.innerText="Escreve uma pergunta primeiro 🙂";
+      if (!pergunta) {{
+        respostaEl.innerText = "Escreve uma pergunta primeiro 🙂";
         return;
-      }
+      }}
       respostaEl.innerText = "A pensar...";
-      try {
-        const response = await fetch("/api/chat", {
+      try {{
+        const resp = await fetch("/api/chat", {{
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: pergunta })
-        });
-
-        // Tentamos sempre ler o JSON, mesmo quando há erro
-        const data = await response.json().catch(() => ({}));
-
-        if(!response.ok){
-          throw new Error(data.message || ("Erro HTTP " + response.status));
-        }
-
+          headers: {{ "Content-Type": "application/json" }},
+          body: JSON.stringify({{ prompt: pergunta }})
+        }});
+        // tenta ler JSON seja em erro ou não
+        const data = await resp.json().catch(() => ({{}}));
+        if (!resp.ok) throw new Error(data.message || ("Erro HTTP " + resp.status));
         respostaEl.innerText = data.resposta || "Sem resposta da API.";
-      } catch (err) {
-        console.error(err);
-        respostaEl.innerText = err.message || "Erro ao obter resposta.";
-      }
-    }
+      }} catch (e) {{
+        console.error(e);
+        respostaEl.innerText = e.message || "Erro ao obter resposta.";
+      }}
+    }}
   </script>
 </head>
 <body>
