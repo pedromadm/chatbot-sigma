@@ -1,3 +1,8 @@
+headers: {
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${openaiKey}`,
+  "OpenAI-Project": "<PROJECT_ID>"
+}
 // arquivo: /api/chat.js
 // Função serverless (Vercel) que chama a OpenAI API
 
